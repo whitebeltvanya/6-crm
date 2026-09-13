@@ -32,5 +32,5 @@ class SaleOrder (TypedDict):
     status: OrderStatus
     tags: set[str]
     created_at: datetime
-    due: datetime
-    closed_at: datetime
+    due: datetime | None
+    closed_at: datetime | None

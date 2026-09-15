@@ -1,5 +1,5 @@
 """БИЗНЕС ЛОГИКА"""
-from typing import TypedDict
+from typing import TypedDict, Optional
 from enum import StrEnum
 from datetime import datetime
 
@@ -32,5 +32,5 @@ class SaleOrder (TypedDict):
     status: OrderStatus
     tags: set[str]
     created_at: datetime
-    due: datetime | None
-    closed_at: datetime | None
+    due: Optional[datetime]
+    closed_at: Optional[datetime]

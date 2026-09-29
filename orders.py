@@ -35,9 +35,11 @@ class SaleOrder (TypedDict):
     due: Optional[datetime]
     closed_at: Optional[datetime]
 
+#init orders list and id generator
+sales_orders: list[SaleOrder] =[]
+next_order_id = create_order_id()
 
-def create_order(id_:   int,
-                 title: str,
+def create_order(title: str,
                  amount: float,
                  email:str,
                  status: OrderStatus = OrderStatus.NEW,
@@ -45,16 +47,16 @@ def create_order(id_:   int,
                  closed_at: Optional[datetime] = None,
                  tags: Optional[set[str]] = None,
                  created_at: datetime = datetime.now()
-                 ) -> SaleOrder:
+                 ):
     """Создание нового заказа"""
     if tags is None:
         tags = set()
 
     new_order: SaleOrder = { 
-        "id": id_,
-        "title" : title,
-        "amount": amount,
-        "email": email,
+        "id":   next_order_id(),
+        "title" : title.strip(),
+        "amount": amount if amount > 0 else 0,
+        "email": email.strip(),
         "status": status,
         "tags":   tags,
         "created_at": created_at,
@@ -62,9 +64,9 @@ def create_order(id_:   int,
         "closed_at": closed_at
     }
 
-    return new_order
+    sales_orders.append(new_order)
 
-def list_orders(orders : list[SaleOrder]):
+def list_orders():
     """Печать  заказа на продажу"""
     def format_order(o: SaleOrder) -> str :
         formatted: str = (
@@ -77,21 +79,26 @@ def list_orders(orders : list[SaleOrder]):
         )
         return formatted
     
-    print("\n".join(map(format_order, orders)))
+    print("\n".join(map(format_order, sales_orders)))
 
-def edit_order(order: SaleOrder, order_fields : SaleOrder) -> SaleOrder:
+def edit_order(id_: int, fields_opdated : SaleOrder) -> bool:
     """Редактирование  заказа на продажу"""
-    for key in order_fields:
-        if key in order and key not in EXCLUDE_KEY_UPDATE:
-            order[key] = order_fields[key]
-    return order
+    ret: bool = False
+    orders_found: list[SaleOrder] = list(filter(lambda o: o["id"] == id_, sales_orders))
+    if len(orders_found) > 0:
+        order = orders_found[0]
+        ret = True
+        for key in fields_opdated:
+            if key in order and key not in EXCLUDE_KEY_UPDATE:
+                order[key] = fields_opdated[key]
+    return ret
     
 
-def remove_order(id_: int, orders: list[SaleOrder]) -> bool:
+def remove_order(id_: int) -> bool:
     """Удаление  заказа на продажу"""
-    for index, order in enumerate(orders):
+    for index, order in enumerate(sales_orders):
         if order.get("id") == id_:
-            del orders[index]
+            del sales_orders[index]
             return True
     return False
     

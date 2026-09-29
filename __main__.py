@@ -1,5 +1,5 @@
 """Точка входа"""
-import orders
+from  orders import SaleOrder, create_order, edit_order, list_orders, remove_order
 
 
 # Точка входа
@@ -25,41 +25,26 @@ def main():
 
 if __name__ == '__main__':
     #Тест create, edit, delete:
-    sales_orders: list[orders.SaleOrder] = [] # список заказов на продажу
-    next_order_id = orders.create_order_id() #новый номер заказа
-
+   
     # Тест create
-    new_sale_order: orders.SaleOrder = orders.create_order(
-                                        next_order_id(),
-                                        "aaa",
-                                        123.00,
-                                        "dddd@fff.tt"
-                                         )
-
-    new_sale_order_2: orders.SaleOrder = orders.create_order(
-                                            next_order_id(),
-                                            "bbb",
-                                            0.50,
-                                            "rrrr@gggg.uu"
-                                             )
-    
-    sales_orders.append(new_sale_order)
-    sales_orders.append(new_sale_order_2)
-    orders.list_orders(sales_orders)
+    create_order("aaa", 123.00,"dddd@fff.tt")
+    create_order("bbb",0.50,"rrrr@gggg.uu")
+    create_order("eee",2,"bybyby@www.du")
+    list_orders()
     print("---"*20)
 
     # Тест edit
     id_find: int = 2
-    orders_find = list(filter(lambda o: o["id"] == id_find, sales_orders))
-    if orders_find[0]:
-            order_found = orders_find[0]
-            order_fields_edit: orders.SaleOrder = {}
-            order_fields_edit["amount"] = 123.45
-            order_fields_edit["title"] = "ddd"
-            orders.edit_order(order_found, order_fields_edit)
-            orders.list_orders(sales_orders)
-            print("---"*20)
+    order_fields_edit: SaleOrder = {}
+    order_fields_edit["amount"] = 123.45
+    order_fields_edit["title"] = "ddd"
+    if edit_order(id_find, order_fields_edit):
+        list_orders()
+        print("---"*20)
+    else:
+        print(f"id: {id_find} not found")
+        print("---"*20)
 
     # Тест remove
-    orders.remove_order(new_sale_order_2["id"], sales_orders)
-    orders.list_orders(sales_orders)
+    remove_order(id_find)
+    list_orders()

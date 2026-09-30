@@ -17,10 +17,10 @@ def create_order_id(start_id:int = 0):
 
 class OrderStatus(StrEnum):
     """Статусы заказа на продажу"""
-    NEW = "new"
-    IN_PROGRESS = "in_progress"
-    DONE = "done"
-    CANCELLED = "cancelled"
+    NEW = 'new'
+    IN_PROGRESS = 'in_progress'
+    DONE = 'done'
+    CANCELLED = 'cancelled'
 
 
 class SaleOrder (TypedDict):
@@ -46,11 +46,14 @@ def create_order(title: str,
                  due: Optional[datetime] = None,
                  closed_at: Optional[datetime] = None,
                  tags: Optional[set[str]] = None,
-                 created_at: datetime = datetime.now()
+                 created_at: Optional[datetime] = None
                  ):
     """Создание нового заказа"""
     if tags is None:
         tags = set()
+
+    if created_at is None:
+        created_at = datetime.now()    
 
     new_order: SaleOrder = { 
         "id":   next_order_id(),
@@ -73,13 +76,14 @@ def list_orders():
                 f"{o['id']:<4} | {o['title']:<10} | " 
                 f"{o['amount']:<7.2f} | {o['email']:<15} | {o['status']:<10} | "
                 f"{', '.join(o['tags']):<15} | "
-                f"{o['created_at'].strftime("%Y-%m-%d %H:%M:%S"):<18} | "
-                f"{o['due'].strftime("%Y-%m-%d %H:%M:%S") if o['due'] else "":<18} | "
+                f"{o['created_at'].strftime('%Y-%m-%d %H:%M:%S'):<18} | "
+                f"{o['due'].strftime('%Y-%m-%d %H:%M:%S') if o['due'] else '':<18} | "
                 f"{o['closed_at'].strftime("%Y-%m-%d %H:%M:%S")if o['closed_at'] else "":<18} | "
         )
         return formatted
     
     print("\n".join(map(format_order, sales_orders)))
+    print("---"*46)
 
 def edit_order(id_: int, fields_opdated : SaleOrder) -> bool:
     """Редактирование  заказа на продажу"""

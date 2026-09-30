@@ -1,4 +1,6 @@
 """Точка входа"""
+import time
+
 from  orders import SaleOrder, create_order, edit_order, list_orders, remove_order
 
 
@@ -28,10 +30,11 @@ if __name__ == '__main__':
    
     # Тест create
     create_order("aaa", 123.00,"dddd@fff.tt")
+    time.sleep(2)
     create_order("bbb",0.50,"rrrr@gggg.uu")
+    time.sleep(2)
     create_order("eee",2,"bybyby@www.du")
     list_orders()
-    print("---"*20)
 
     # Тест edit
     id_find: int = 2
@@ -40,10 +43,9 @@ if __name__ == '__main__':
     order_fields_edit["title"] = "ddd"
     if edit_order(id_find, order_fields_edit):
         list_orders()
-        print("---"*20)
     else:
         print(f"id: {id_find} not found")
-        print("---"*20)
+
 
     # Тест remove
     remove_order(id_find)

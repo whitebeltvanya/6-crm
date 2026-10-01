@@ -71,19 +71,39 @@ def create_order(title: str,
 
 def list_orders():
     """Печать  заказа на продажу"""
-    def format_order(o: SaleOrder) -> str :
-        formatted: str = (
-                f"{o['id']:<4} | {o['title']:<10} | " 
-                f"{o['amount']:<7.2f} | {o['email']:<15} | {o['status']:<10} | "
-                f"{', '.join(o['tags']):<15} | "
-                f"{o['created_at'].strftime('%Y-%m-%d %H:%M:%S'):<18} | "
-                f"{o['due'].strftime('%Y-%m-%d %H:%M:%S') if o['due'] else '':<18} | "
-                f"{o['closed_at'].strftime("%Y-%m-%d %H:%M:%S")if o['closed_at'] else "":<18} | "
-        )
-        return formatted
+    delim: str = " | "
+    headers: list[str] = list(SaleOrder.__annotations__.keys())
+    def fmt_row_str(order: SaleOrder) -> list[str] :   
+        row: list[str] = [
+            f"{order['id']}",
+            order['title'],
+            f"{order['amount']:.2f}",
+            order['email'],
+            order['status'],
+            f"{', '.join(order['tags']) if order['tags'] else '-'}",
+            f"{order['created_at'].strftime('%Y-%m-%d %H:%M:%S')}",
+            f"{order['due'].strftime('%Y-%m-%d %H:%M:%S') if order['due'] else '-'}",
+            f"{order['closed_at'].strftime("%Y-%m-%d %H:%M:%S")if order['closed_at'] else '-'}"           
+        ]
+        return row
     
-    print("\n".join(map(format_order, sales_orders)))
-    print("---"*46)
+    rows= list(map(fmt_row_str, sales_orders))
+    
+    col_lens = [len(h) for h in headers]
+    for row in rows:
+        for i, val in enumerate(row):
+            col_lens[i] = max(col_lens[i], len(val))
+    
+    table_len: int = sum(col_lens) + len(delim)* len(col_lens)
+    underline: str = f"\n{'-'*table_len}"
+    
+    def fmt_row_out(row: list[str]): 
+        return delim.join(f"{val:<{col_lens[i]}}" for i, val in enumerate(row)) + underline
+
+    print(f"{'\n'*2}Список заказов ({len(rows)}):" + underline)
+    print(fmt_row_out(headers))
+    print("\n".join(map(fmt_row_out, rows)))
+   
 
 def edit_order(id_: int, fields_opdated : SaleOrder) -> bool:
     """Редактирование  заказа на продажу"""

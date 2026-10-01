@@ -29,7 +29,7 @@ if __name__ == '__main__':
     #Тест create, edit, delete:
    
     # Тест create
-    create_order("aaa", 123.00,"dddd@fff.tt")
+    create_order("aaa", 123.00,"ddddg@fff.tt")
     time.sleep(2)
     create_order("bbb",0.50,"rrrr@gggg.uu")
     time.sleep(2)
